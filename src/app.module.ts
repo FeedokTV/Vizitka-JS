@@ -2,6 +2,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { formatGraphQLError } from './common/format-graphql-error';
 import { GraphQLContext } from './common/graphql-context';
 import { LoadersModule } from './loaders/loaders.module';
 import { LoadersService } from './loaders/loaders.service';
@@ -22,6 +23,7 @@ import { ProfileModule } from './profile/profile.module';
         playground: false,
         introspection: true,
         plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        formatError: formatGraphQLError,
         context: (): GraphQLContext => ({ loaders: loaders.create() }),
       }),
     }),
