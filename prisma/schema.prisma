@@ -1,0 +1,69 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id          String       @id
+  name        String
+  description String
+  links       Link[]
+  skills      Skill[]
+  experience  Experience[]
+  projects    Project[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Link {
+  id        String  @id @default(uuid())
+  title     String
+  url       String
+  order     Int     @default(0)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+
+  @@index([profileId])
+}
+
+model Skill {
+  id        String  @id @default(uuid())
+  name      String
+  category  String?
+  order     Int     @default(0)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+
+  @@unique([profileId, name])
+  @@index([profileId])
+}
+
+model Experience {
+  id           String    @id @default(uuid())
+  company      String
+  position     String
+  startDate    DateTime
+  endDate      DateTime?
+  achievements String[]
+  profile      Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId    String
+
+  @@index([profileId])
+}
+
+model Project {
+  id          String  @id @default(uuid())
+  name        String
+  url         String
+  description String?
+  order       Int     @default(0)
+  profile     Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId   String
+
+  @@index([profileId])
+}
